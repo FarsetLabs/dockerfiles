@@ -1,21 +1,17 @@
-#########################################
-# Dockerfile to setup GNU Mailman Suite
-# Based on Ubuntu
-#########################################
-# Set the base image to Ubuntu
-FROM ubuntu
+FROM ubuntu:14.04
+MAINTAINER Dan Porter
 
-# File Author / Maintainer
-MAINTAINER Terri Oda
-
-# Update the sources and install some basic python stuff
+# install dependencies from apt
 RUN apt-get update && \
-    apt-get install -y bzr python3-dev python3-pip python-dev python-pip python-virtualenv
+    DEBIAN_FRONTEND=noninteractive apt-get install -y bzr curl node-less python3-dev python3-pip python-dev python-pip python-virtualenv && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
-# Get the nodejs stuff
-RUN apt-get install -y nodejs npm && \
-    npm install -g less && \
-    ln -s /usr/bin/nodejs /usr/bin/node
+# install Node stable
+RUN curl -sL https://deb.nodesource.com/setup | bash - && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y nodejs && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 # Set the default directory where CMD will execute
 WORKDIR /mailman3
